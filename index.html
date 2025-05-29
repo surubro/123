@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>T9 Encoder and Decoder</title>
+  <title>T9 Encoder Decoder</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -28,20 +28,6 @@
       margin-top: 20px;
       font-weight: bold;
     }
-    .image-container {
-      text-align: center;
-      margin-top: 30px;
-    }
-    .copy-btn {
-      padding: 5px 10px;
-      background-color: #008CBA;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    .copy-btn:hover {
-      background-color: #007B9E;
-    }
     .text-box {
       width: 100%;
       padding: 10px;
@@ -50,114 +36,71 @@
       margin-bottom: 10px;
       word-wrap: break-word;
     }
-    .copyright {
-      margin-top: 40px;
-      text-align: center;
-      color: #777;
-    }
   </style>
 </head>
 <body>
-  <h1>T9 Encoder and Decoder (Simplified)</h1>
-  <label for="textInput">Enter Message (Plain Text or Encoded):</label>
-  <textarea id="textInput" placeholder="Type something..."></textarea>
+  <h1>T9 Encoder/Decoder</h1>
+  <label for="textInput">Enter letters to encode or numbers to decode:</label>
+  <textarea id="textInput" placeholder="Try typing 'hello' or '43556'"></textarea>
   <button onclick="convert()">Convert</button>
 
   <div class="output">
-    <p><strong>Encoded Message (T9 Letters):</strong></p>
+    <p><strong>Encoded Message (Numbers):</strong></p>
     <div id="encodedMessage" class="text-box"></div>
-    <button class="copy-btn" onclick="copyText('encodedMessage')">Copy</button>
 
-    <p><strong>Decoded Message (Plain Text):</strong></p>
+    <p><strong>Decoded Message (Letters):</strong></p>
     <div id="decodedMessage" class="text-box"></div>
-    <button class="copy-btn" onclick="copyText('decodedMessage')">Copy</button>
-  </div>
-
-  <div class="image-container">
-    <img src="https://raw.githubusercontent.com/surubro/surubro.github.io/refs/heads/master/t9-t9.png" alt="T9 Encoder and Decoder Example">
-  </div>
-
-  <div class="copyright">
-    Made with ❤️ by Surendra Sonawane
   </div>
 
   <script>
     const t9Map = {
-      "2": ["a", "b", "c"],
-      "3": ["d", "e", "f"],
-      "4": ["g", "h", "i"],
-      "5": ["j", "k", "l"],
-      "6": ["m", "n", "o"],
-      "7": ["p", "q", "r", "s"],
-      "8": ["t", "u", "v"],
-      "9": ["w", "x", "y", "z"],
-      "0": ["_"]
+      '2': ['a', 'b', 'c'],
+      '3': ['d', 'e', 'f'],
+      '4': ['g', 'h', 'i'],
+      '5': ['j', 'k', 'l'],
+      '6': ['m', 'n', 'o'],
+      '7': ['p', 'q', 'r', 's'],
+      '8': ['t', 'u', 'v'],
+      '9': ['w', 'x', 'y', 'z'],
+      '0': ['_']
     };
 
-    const reverseT9Map = {};
-    for (const key in t9Map) {
-      for (const letter of t9Map[key]) {
-        reverseT9Map[letter] = key;
-      }
+    const letterToDigit = {};
+    for (const digit in t9Map) {
+      t9Map[digit].forEach(letter => {
+        letterToDigit[letter] = digit;
+      });
     }
 
-    function getRandomT9Letter(digit) {
-      const letters = t9Map[digit];
-      return letters[Math.floor(Math.random() * letters.length)];
+    function getRandomFromArray(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
     }
 
     function convert() {
-      const input = document.getElementById("textInput").value.trim();
+      const input = document.getElementById("textInput").value.trim().toLowerCase();
       let encoded = "";
       let decoded = "";
 
-      // Encoding
-      for (const char of input.toLowerCase()) {
-        if (char === " ") {
-          encoded += getRandomT9Letter("0");
-        } else if (reverseT9Map[char]) {
-          encoded += getRandomT9Letter(reverseT9Map[char]);
+      // Encode: letter to digit
+      for (const char of input) {
+        if (/[a-z_]/.test(char)) {
+          encoded += letterToDigit[char] || char;
         } else {
           encoded += char;
         }
       }
 
-      // Decoding
-      for (const char of input.toLowerCase()) {
-        if (char === "_") {
-          decoded += " ";
+      // Decode: digit to random letter
+      for (const char of input) {
+        if (/[0-9]/.test(char) && t9Map[char]) {
+          decoded += getRandomFromArray(t9Map[char]);
         } else {
-          let found = false;
-          for (const digit in t9Map) {
-            if (t9Map[digit].includes(char)) {
-              decoded += t9Map[digit][0]; // Always pick first letter
-              found = true;
-              break;
-            }
-          }
-          if (!found) decoded += char;
+          decoded += char;
         }
       }
 
       document.getElementById("encodedMessage").innerText = encoded || "No encoded message";
       document.getElementById("decodedMessage").innerText = decoded || "No decoded message";
-    }
-
-    function copyText(elementId) {
-      const textToCopy = document.getElementById(elementId).innerText;
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(textToCopy)
-          .then(() => alert("Text copied to clipboard!"))
-          .catch(err => alert("Failed to copy text: " + err));
-      } else {
-        const textArea = document.createElement("textarea");
-        textArea.value = textToCopy;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-        alert("Text copied to clipboard!");
-      }
     }
   </script>
 </body>
