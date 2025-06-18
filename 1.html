@@ -67,6 +67,12 @@
       });
     }
 
+    const codeReplacements = {
+      "[1a_xp]": "$12097",
+      "[1l/_n/c_al]": "15/06/2025"
+      // Add more replacements as needed
+    };
+
     function encode() {
       const input = document.getElementById("textInput").value.trim().toLowerCase();
       let result = "";
@@ -77,15 +83,23 @@
     }
 
     function decode() {
-      const input = document.getElementById("textInput").value.trim();
+      let input = document.getElementById("textInput").value.trim();
+
+      // Step 1: Replace known bracketed codes
+      for (const key in codeReplacements) {
+        input = input.replaceAll(key, codeReplacements[key]);
+      }
+
+      // Step 2: T9-style digit to letter decoding
       let result = "";
       for (let char of input) {
         if (t9Map[char]) {
-          result += t9Map[char][0]; // Always pick the first matching letter
+          result += t9Map[char][0]; // always use first letter from T9 map
         } else {
           result += char;
         }
       }
+
       document.getElementById("outputBox").innerText = result || "No decoded message";
     }
 
