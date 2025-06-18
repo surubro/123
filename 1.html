@@ -3,19 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>T9 Encoder/Decoder</title>
+  <title>T9 Encoder / Decoder</title>
   <style>
     body {
       font-family: sans-serif;
-      margin: 20px;
-      padding: 0;
-      background: #f9f9f9;
+      background: #f4f4f4;
+      margin: 30px;
     }
-    input, button, textarea {
+    input, button {
       font-size: 16px;
-      margin: 10px 0;
       padding: 10px;
       width: 100%;
+      margin-bottom: 10px;
       box-sizing: border-box;
     }
     button {
@@ -27,24 +26,26 @@
     button:hover {
       background: #0056b3;
     }
+    .copy-btn {
+      background: #28a745;
+    }
     .output {
-      margin-top: 10px;
       background: #eee;
       padding: 10px;
       white-space: pre-wrap;
-    }
-    .copy-btn {
-      background: #28a745;
-      margin-top: 5px;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <input type="text" id="textInput" placeholder="Type letters to encode or numbers to decode" />
-  <button onclick="convert()">Convert</button>
 
-  <div class="output" id="encodedMessage">Encoded message appears here</div>
-  <button class="copy-btn" onclick="copyText()">Copy Encoded</button>
+  <input type="text" id="textInput" placeholder="Type text to encode or decode..." />
+
+  <button onclick="encode()">Encode</button>
+  <button onclick="decode()">Decode</button>
+
+  <div class="output" id="outputBox">Output will appear here</div>
+  <button class="copy-btn" onclick="copyOutput()">Copy</button>
 
   <script>
     const t9Map = {
@@ -60,33 +61,39 @@
     };
 
     const letterToDigit = {};
-    for (let digit in t9Map) {
+    for (const digit in t9Map) {
       t9Map[digit].forEach(letter => {
         letterToDigit[letter] = digit;
       });
     }
 
-    function getRandom(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    function convert() {
+    function encode() {
       const input = document.getElementById("textInput").value.trim().toLowerCase();
       let result = "";
-
-      if (/^[a-z_]+$/.test(input)) {
-        for (let c of input) result += letterToDigit[c] || c;
-      } else {
-        for (let c of input) result += t9Map[c] ? getRandom(t9Map[c]) : c;
+      for (let char of input) {
+        result += letterToDigit[char] || char;
       }
-
-      document.getElementById("encodedMessage").innerText = result || "No output";
+      document.getElementById("outputBox").innerText = result || "No encoded message";
     }
 
-    function copyText() {
-      const text = document.getElementById("encodedMessage").innerText;
+    function decode() {
+      const input = document.getElementById("textInput").value.trim();
+      let result = "";
+      for (let char of input) {
+        if (t9Map[char]) {
+          result += t9Map[char][0]; // Always pick the first matching letter
+        } else {
+          result += char;
+        }
+      }
+      document.getElementById("outputBox").innerText = result || "No decoded message";
+    }
+
+    function copyOutput() {
+      const text = document.getElementById("outputBox").innerText;
       navigator.clipboard.writeText(text).then(() => alert("Copied!"));
     }
   </script>
+
 </body>
 </html>
