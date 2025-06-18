@@ -41,8 +41,8 @@
 <body>
 
   <input type="text" id="textInput" placeholder="Enter text to encode or decode..." />
-  <button onclick="handleEncode()">Encode</button>
-  <button onclick="handleDecode()">Decode</button>
+  <button onclick="encode()">Encode</button>
+  <button onclick="decode()">Decode</button>
   <div class="output" id="outputBox">Output will appear here</div>
   <button class="copy-btn" onclick="copyOutput()">Copy</button>
 
@@ -76,7 +76,8 @@
       return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    function handleEncode() {
+    // ✅ Encode: Letters → Numbers
+    function encode() {
       const input = document.getElementById("textInput").value.trim().toLowerCase();
       let output = "";
 
@@ -87,15 +88,16 @@
       document.getElementById("outputBox").innerText = output || "No encoded output";
     }
 
-    function handleDecode() {
+    // ✅ Decode: Numbers → Random letters, with custom code replacements
+    function decode() {
       let input = document.getElementById("textInput").value.trim();
 
-      // Step 1: Replace known custom codes
+      // Step 1: Replace custom bracketed codes
       for (const key in customCodes) {
         input = input.replaceAll(key, customCodes[key]);
       }
 
-      // Step 2: Replace numbers with random matching letters
+      // Step 2: Convert digits to random letters
       let output = "";
       for (let char of input) {
         if (t9Map[char]) {
