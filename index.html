@@ -3,11 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>T9 2-Alphabet Encoder Decoder</title>
+  <title>T9 3-Alphabet Encoder Decoder</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
     textarea {
       width: 100%;
@@ -22,6 +25,7 @@
       border: none;
       cursor: pointer;
       font-size: 16px;
+      margin-bottom: 10px;
     }
     button:hover {
       background-color: #45a049;
@@ -38,28 +42,40 @@
       white-space: pre-wrap;
       word-wrap: break-word;
       font-size: 16px;
+      margin-bottom: 5px;
+    }
+    .copy-btn {
+      background-color: #2196F3;
+      margin-bottom: 20px;
+    }
+    .copy-btn:hover {
+      background-color: #0b7dda;
     }
     img {
-      margin-top: 30px;
-      width: 300px;
+      width: 100%;
+      max-width: 300px;
+      display: block;
+      margin: 30px auto 0;
     }
   </style>
 </head>
 <body>
   <h1>T9 Encoder/Decoder</h1>
   <label for="textInput">Enter letters to encode or numbers to decode:</label>
-  <textarea id="textInput" placeholder="Try typing 'hello' or '43556'"></textarea>
+  <textarea id="textInput" placeholder="Try typing 'hello world ₹100' or '43556'"></textarea>
   <button onclick="convert()">Convert</button>
 
   <div class="output">
     <p><strong>Encoded Message (Numbers):</strong></p>
     <div id="encodedMessage" class="text-box"></div>
+    <button class="copy-btn" onclick="copyText('encodedMessage')">Copy Encoded</button>
 
     <p><strong>Decoded Message (Letters):</strong></p>
     <div id="decodedMessage" class="text-box"></div>
+    <button class="copy-btn" onclick="copyText('decodedMessage')">Copy Decoded</button>
   </div>
 
-  <img src="https://raw.githubusercontent.com/surubro/123/98a1442d3c5e3f858334bdd9c2047b27a83ff003/t9.png" alt="GitHub Image">
+  <img src="https://raw.githubusercontent.com/surubro/123/98a1442d3c5e3f858334bdd9c2047b27a83ff003/t9.png" alt="T9 Mapping Image">
 
   <script>
     const t9Map = {
@@ -70,8 +86,7 @@
       '6': ['m', 'n', 'o'],
       '7': ['p', 'q', 'r', 's'],
       '8': ['t', 'u', 'v'],
-      '9': ['w', 'x', 'y', 'z'],
-      '0': ['_']
+      '9': ['w', 'x', 'y', 'z']
     };
 
     const letterToDigit = {};
@@ -92,9 +107,9 @@
 
       for (const char of input) {
         if (char >= 'a' && char <= 'z') {
-          encoded += letterToDigit[char] || char;
+          encoded += letterToDigit[char];
         } else {
-          encoded += char; // keep symbols like ₹, _, !, etc.
+          encoded += char; // Keep symbols and space as-is
         }
       }
 
@@ -102,12 +117,21 @@
         if (char >= '0' && char <= '9' && t9Map[char]) {
           decoded += getRandomFromArray(t9Map[char]);
         } else {
-          decoded += char; // keep symbols
+          decoded += char; // Keep symbols and space as-is
         }
       }
 
       document.getElementById("encodedMessage").innerText = encoded || "No encoded message";
       document.getElementById("decodedMessage").innerText = decoded || "No decoded message";
+    }
+
+    function copyText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied to clipboard!");
+      }).catch(err => {
+        alert("Failed to copy: " + err);
+      });
     }
   </script>
 </body>
