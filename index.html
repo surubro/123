@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>T9 3-Alphabet Encoder Decoder</title>
+  <title>T9 2-Alphabet Encoder Decoder</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -87,6 +87,7 @@
       '7': ['p', 'q', 'r', 's'],
       '8': ['t', 'u', 'v'],
       '9': ['w', 'x', 'y', 'z']
+      // 0 is not mapped intentionally to preserve it
     };
 
     const letterToDigit = {};
@@ -105,19 +106,21 @@
       let encoded = "";
       let decoded = "";
 
+      // Encoding: letter → number
       for (const char of input) {
         if (char >= 'a' && char <= 'z') {
           encoded += letterToDigit[char];
         } else {
-          encoded += char; // Keep symbols and space as-is
+          encoded += char; // Keep symbols, numbers, and spaces as-is
         }
       }
 
+      // Decoding: number → random letter
       for (const char of input) {
-        if (char >= '0' && char <= '9' && t9Map[char]) {
+        if (t9Map[char]) {
           decoded += getRandomFromArray(t9Map[char]);
         } else {
-          decoded += char; // Keep symbols and space as-is
+          decoded += char; // Keep symbols, 0, and spaces as-is
         }
       }
 
