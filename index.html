@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>T9 2 alphabet  Encoder Decoder</title>
+  <title>T9 2-Alphabet Encoder Decoder</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 50px;
+      margin: 20px;
     }
     textarea {
       width: 100%;
       height: 100px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+      font-size: 16px;
     }
     button {
       padding: 10px 20px;
@@ -20,6 +21,7 @@
       color: white;
       border: none;
       cursor: pointer;
+      font-size: 16px;
     }
     button:hover {
       background-color: #45a049;
@@ -31,10 +33,15 @@
     .text-box {
       width: 100%;
       padding: 10px;
-      background-color: #f1f1f1;
+      background-color: #f9f9f9;
       border: 1px solid #ccc;
-      margin-bottom: 10px;
+      white-space: pre-wrap;
       word-wrap: break-word;
+      font-size: 16px;
+    }
+    img {
+      margin-top: 30px;
+      width: 300px;
     }
   </style>
 </head>
@@ -51,6 +58,8 @@
     <p><strong>Decoded Message (Letters):</strong></p>
     <div id="decodedMessage" class="text-box"></div>
   </div>
+
+  <img src="https://raw.githubusercontent.com/surubro/123/98a1442d3c5e3f858334bdd9c2047b27a83ff003/t9.png" alt="GitHub Image">
 
   <script>
     const t9Map = {
@@ -81,21 +90,19 @@
       let encoded = "";
       let decoded = "";
 
-      // Encode: letter to digit
       for (const char of input) {
-        if (/[a-z_]/.test(char)) {
+        if (char >= 'a' && char <= 'z') {
           encoded += letterToDigit[char] || char;
         } else {
-          encoded += char;
+          encoded += char; // keep symbols like ₹, _, !, etc.
         }
       }
 
-      // Decode: digit to random letter
       for (const char of input) {
-        if (/[0-9]/.test(char) && t9Map[char]) {
+        if (char >= '0' && char <= '9' && t9Map[char]) {
           decoded += getRandomFromArray(t9Map[char]);
         } else {
-          decoded += char;
+          decoded += char; // keep symbols
         }
       }
 
@@ -103,17 +110,5 @@
       document.getElementById("decodedMessage").innerText = decoded || "No decoded message";
     }
   </script>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title></title>
-</head>
-<body>
-  <h2></h2>
-  <img src="https://raw.githubusercontent.com/surubro/123/98a1442d3c5e3f858334bdd9c2047b27a83ff003/t9.png" alt="GitHub Image" width="300">
 </body>
 </html>
