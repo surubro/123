@@ -62,8 +62,8 @@
 </head>
 <body>
   <h1>T9 Encoder/Decoder</h1>
-  <label for="textInput">Enter letters to encode or numbers to decode:</label>
-  <textarea id="textInput" placeholder="Try typing 'sumit [948]'"></textarea>
+  <label for="textInput">Enter text, for bracket encode try: sumit  [w_tcretmgn]</label>
+  <textarea id="textInput" placeholder="Try typing 'hello world', '43556', or 'sumit [w_tcretmgn]'"></textarea>
   <div>
     <button onclick="encode()">Encode</button>
     <button onclick="decode()">Decode</button>
@@ -101,14 +101,15 @@
       });
     }
 
+    // Helper for random letter in decode
     function getRandomFromArray(arr) {
       return arr[Math.floor(Math.random() * arr.length)];
     }
 
+    // Encode: letters → T9 numbers (all of input)
     function encode() {
       const input = document.getElementById("textInput").value.trim().toLowerCase();
       let encoded = "";
-
       for (const char of input) {
         if (char >= 'a' && char <= 'z') {
           encoded += letterToDigit[char];
@@ -119,10 +120,10 @@
       document.getElementById("encodedMessage").innerText = encoded || "No encoded message";
     }
 
+    // Decode: T9 numbers → random letter (all of input)
     function decode() {
       const input = document.getElementById("textInput").value.trim().toLowerCase();
       let decoded = "";
-
       for (const char of input) {
         if (t9Map[char]) {
           decoded += getRandomFromArray(t9Map[char]);
@@ -133,24 +134,25 @@
       document.getElementById("decodedMessage").innerText = decoded || "No decoded message";
     }
 
-    // New function for decoding inside brackets
+    // Decode []: ONLY letters inside brackets → T9 numbers. Everything else unchanged!
     function decodeBrackets() {
       const input = document.getElementById("textInput").value;
-      // Regex to match contents inside [ ... ]
       const output = input.replace(/\[([^\]]+)\]/g, function(match, group1) {
-        let decoded = "";
-        for (const char of group1.trim().toLowerCase()) {
-          if (t9Map[char]) {
-            decoded += getRandomFromArray(t9Map[char]);
+        let encoded = "";
+        for (const char of group1) {
+          const lowchar = char.toLowerCase();
+          if (lowchar >= 'a' && lowchar <= 'z') {
+            encoded += letterToDigit[lowchar];
           } else {
-            decoded += char;
+            encoded += char;
           }
         }
-        return '[' + decoded + ']';
+        return '[' + encoded + ']';
       });
       document.getElementById('decodedMessage').innerText = output || "No decoded message";
     }
 
+    // Copy output helper
     function copyText(elementId) {
       const text = document.getElementById(elementId).innerText;
       navigator.clipboard.writeText(text).then(() => {
