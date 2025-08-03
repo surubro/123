@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>T9 2-Alphabet Encoder Decoder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 10px;
+      margin-right: 8px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .output {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .text-box {
+      width: 100%;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    .copy-btn {
+      background-color: #2196F3;
+      margin-bottom: 20px;
+    }
+    .copy-btn:hover {
+      background-color: #0b7dda;
+    }
+    img {
+      width: 100%;
+      max-width: 300px;
+      display: block;
+      margin: 30px auto 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>T9 Encoder/Decoder</h1>
+  <label for="textInput">Enter letters to encode or numbers to decode:</label>
+  <textarea id="textInput" placeholder="Try typing 'hello world ₹100' or '43556'"></textarea>
+  <div>
+    <button onclick="encode()">Encode</button>
+    <button onclick="decode()">Decode</button>
+  </div>
+
+  <div class="output">
+    <p><strong>Encoded Message (Numbers):</strong></p>
+    <div id="encodedMessage" class="text-box"></div>
+    <button class="copy-btn" onclick="copyText('encodedMessage')">Copy Encoded</button>
+
+    <p><strong>Decoded Message (Letters):</strong></p>
+    <div id="decodedMessage" class="text-box"></div>
+    <button class="copy-btn" onclick="copyText('decodedMessage')">Copy Decoded</button>
+  </div>
+
+  <img src="https://raw.githubusercontent.com/surubro/123/98a1442d3c5e3f858334bdd9c2047b27a83ff003/t9.png" alt="T9 Mapping Image">
+
+  <script>
+    const t9Map = {
+      '2': ['a', 'b', 'c'],
+      '3': ['d', 'e', 'f'],
+      '4': ['g', 'h', 'i'],
+      '5': ['j', 'k', 'l'],
+      '6': ['m', 'n', 'o'],
+      '7': ['p', 'q', 'r', 's'],
+      '8': ['t', 'u', 'v'],
+      '9': ['w', 'x', 'y', 'z']
+      // 0 is not mapped intentionally to preserve it
+    };
+
+    const letterToDigit = {};
+    for (const digit in t9Map) {
+      t9Map[digit].forEach(letter => {
+        letterToDigit[letter] = digit;
+      });
+    }
+
+    function getRandomFromArray(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function encode() {
+      const input = document.getElementById("textInput").value.trim().toLowerCase();
+      let encoded = "";
+
+      // Encoding: letter → number
+      for (const char of input) {
+        if (char >= 'a' && char <= 'z') {
+          encoded += letterToDigit[char];
+        } else {
+          encoded += char; // Keep symbols, numbers, and spaces as-is
+        }
+      }
+      document.getElementById("encodedMessage").innerText = encoded || "No encoded message";
+    }
+
+    function decode() {
+      const input = document.getElementById("textInput").value.trim().toLowerCase();
+      let decoded = "";
+
+      // Decoding: number → random letter
+      for (const char of input) {
+        if (t9Map[char]) {
+          decoded += getRandomFromArray(t9Map[char]);
+        } else {
+          decoded += char; // Keep symbols, 0, and spaces as-is
+        }
+      }
+      document.getElementById("decodedMessage").innerText = decoded || "No decoded message";
+    }
+
+    function copyText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied to clipboard!");
+      }).catch(err => {
+        alert("Failed to copy: " + err);
+      });
+    }
+  </script>
+</body>
+</html>
